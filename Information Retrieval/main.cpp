@@ -34,7 +34,7 @@ char *GetWebPage(char *myurl)
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
    
-    char stringHTML[readBufferHTML.size()]; //variable length array can't be made static
+    char stringHTML[readBufferHTML.size()]; //Wellicht probeer dit static te maken!
     strcpy(stringHTML, readBufferHTML.c_str());
     char *HTMLpointer = stringHTML;
     
