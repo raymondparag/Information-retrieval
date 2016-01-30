@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		14F3C73E1C5BA07900C8433C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C73D1C5BA07900C8433C /* main.cpp */; };
+		14EC21701C5D05B700996E44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C73D1C5BA07900C8433C /* main.cpp */; };
 		14F3C7481C5BA09E00C8433C /* htmlstreamparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C7451C5BA09E00C8433C /* htmlstreamparser.cpp */; };
 		14F3C74A1C5BA0CA00C8433C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F3C7491C5BA0CA00C8433C /* libcurl.tbd */; };
 /* End PBXBuildFile section */
@@ -129,8 +129,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14EC21701C5D05B700996E44 /* main.cpp in Sources */,
 				14F3C7481C5BA09E00C8433C /* htmlstreamparser.cpp in Sources */,
-				14F3C73E1C5BA07900C8433C /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +249,7 @@
 				14F3C7431C5BA07900C8433C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

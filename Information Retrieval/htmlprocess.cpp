@@ -10,6 +10,7 @@ Run the program with this command:
 
 /*Header file part */
 #include <stdio.h> 
+#include <iostream>
 #include <string.h>
 #include <curl/curl.h>
 #include "htmlstreamparser.h"
@@ -25,7 +26,8 @@ static size_t write_callback(char *buffer, size_t size, size_t nmemb, HTMLSTREAM
 	/*the size of the received data*/
 	size_t realsize = size * nmemb, p; 
 
-	for (p = 0; p < realsize; p++) 
+    std::cout << "Size: " <<realsize << std::endl;
+	for (p = 0; p < realsize; p++)
 	{             
 		html_parser_char_parse(hsp, ((char *)buffer)[p]);/*Parse the char specified by the char argument*/  
 		if (html_parser_cmp_tag(hsp, "a", 1)) /*Compares the tag name and the string “a”.The argument 1 is a string length.Returns 1 for equality otherwise returns 0*/   
@@ -62,7 +64,7 @@ static void Download_URL(char * url,HTMLSTREAMPARSER *hsp)
     
 	/*allow curl to perform the action*/
 	CURLcode curl_res = curl_easy_perform(curl);
-
+    
 	if(curl_res==0)
 	{ 
 		printf("HTML file downloaded success\n"); 
