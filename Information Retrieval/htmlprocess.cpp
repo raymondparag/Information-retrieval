@@ -26,7 +26,6 @@ static size_t write_callback(char *buffer, size_t size, size_t nmemb, HTMLSTREAM
 	/*the size of the received data*/
 	size_t realsize = size * nmemb, p; 
 
-    std::cout << "Size: " <<realsize << std::endl;
 	for (p = 0; p < realsize; p++)
 	{             
 		html_parser_char_parse(hsp, ((char *)buffer)[p]);/*Parse the char specified by the char argument*/  

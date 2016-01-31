@@ -7,16 +7,18 @@
 //
 
 #include <iostream>
+#include <memory>
 #include "htmlstreamparser.h"
 #include <curl/curl.h>
 using namespace std;
 
-static string readBufferHTML;
+static string readerBuffer; //
 
 static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
-    readBufferHTML.append((char*)buffer, realsize);
+    ((string*)userp)->append((char*)buffer, realsize);
+    readerBuffer.append((char*)buffer, realsize); //
     return realsize;
 }
 
@@ -24,7 +26,7 @@ char *GetWebPage(char *myurl)
 {
     CURL *easyhandle = curl_easy_init();
     CURLcode results;
-    readBufferHTML.clear();
+    string readBufferHTML;
     
     curl_easy_setopt(easyhandle, CURLOPT_URL, myurl);
     curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, write_data);
@@ -34,13 +36,14 @@ char *GetWebPage(char *myurl)
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
    
-    char stringHTML[readBufferHTML.size()]; //Wellicht probeer dit static te maken!
+    char stringHTML[readBufferHTML.size()];
     strcpy(stringHTML, readBufferHTML.c_str());
     char *HTMLpointer = stringHTML;
     
     if(strlen(HTMLpointer) != 0)
     {
         cout << "Successfully obtained HTML!" << endl;
+        cout << "Pointer size in first: " << strlen(HTMLpointer); //
         return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(....)
     }
     else
@@ -62,12 +65,16 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
     
-    //myhtmlpage wordt waarschijnlijk doordat stack geleegd wordt gealtered ---> FIX dat
-    char stringhtml[readBufferHTML.size()];
+    //Pointer uit eerst funct wordt niet volledig overgepaast --> stack
+    //Google: c++ pointer to stack variable
+    char stringHTML[readerBuffer.size()]; //
+    strcpy(stringHTML, readerBuffer.c_str()); //
     
-    for(int i = 0; i < strlen(stringhtml); ++i)
+    cout << "Pointer size in second: " << strlen(myhtmlpage); //
+
+    for(int i = 0; i < strlen(stringHTML); ++i) //
     {
-        html_parser_char_parse(hsp, stringhtml[i]);
+        html_parser_char_parse(hsp, stringHTML[i]); //
         if (html_parser_cmp_tag(hsp, "a", 1))
             if (html_parser_cmp_attr(hsp, "href", 4))
                 if (html_parser_is_in(hsp, HTML_VALUE_ENDED))
