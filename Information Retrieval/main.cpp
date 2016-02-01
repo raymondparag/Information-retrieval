@@ -8,17 +8,19 @@
 
 #include <iostream>
 #include <memory>
+#include <stdlib.h>
+#include <stdio.h>
 #include "htmlstreamparser.h"
 #include <curl/curl.h>
 using namespace std;
 
-static string readerBuffer; //
+//static string readerBuffer; //
 
 static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
     ((string*)userp)->append((char*)buffer, realsize);
-    readerBuffer.append((char*)buffer, realsize); //
+    //readerBuffer.append((char*)buffer, realsize); //
     return realsize;
 }
 
@@ -36,14 +38,16 @@ char *GetWebPage(char *myurl)
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
    
-    char stringHTML[readBufferHTML.size()];
-    strcpy(stringHTML, readBufferHTML.c_str());
-    char *HTMLpointer = stringHTML;
+    //char stringHTML[readBufferHTML.size()];
+    //strcpy(stringHTML, readBufferHTML.c_str());
+    //char *HTMLpointer = stringHTML;
+    char *HTMLpointer = (char*)malloc(readBufferHTML.size());
+    strcpy(HTMLpointer,readBufferHTML.c_str());
     
     if(strlen(HTMLpointer) != 0)
     {
         cout << "Successfully obtained HTML!" << endl;
-        cout << "Pointer size in first: " << strlen(HTMLpointer); //
+        //cout << "Pointer size in first: " << strlen(HTMLpointer); //
         return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(....)
     }
     else
@@ -67,14 +71,14 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     
     //Pointer uit eerst funct wordt niet volledig overgepaast --> stack
     //Google: c++ pointer to stack variable
-    char stringHTML[readerBuffer.size()]; //
-    strcpy(stringHTML, readerBuffer.c_str()); //
+    //char stringHTML[readerBuffer.size()]; //
+    //strcpy(stringHTML, readerBuffer.c_str()); //
     
-    cout << "Pointer size in second: " << strlen(myhtmlpage); //
+    //cout << "Pointer size in second: " << strlen(myhtmlpage);
 
-    for(int i = 0; i < strlen(stringHTML); ++i) //
+    for(int i = 0; i < strlen(myhtmlpage); ++i)
     {
-        html_parser_char_parse(hsp, stringHTML[i]); //
+        html_parser_char_parse(hsp, myhtmlpage[i]);
         if (html_parser_cmp_tag(hsp, "a", 1))
             if (html_parser_cmp_attr(hsp, "href", 4))
                 if (html_parser_is_in(hsp, HTML_VALUE_ENDED))
@@ -83,7 +87,10 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                     printf("%s\n", val);
                 }
     }
+    //Al de opgevraagde links returnen en als er geen gevonden zijn --> null returnen
+    
     html_parser_cleanup(hsp);
+    free(myhtmlpage);
     
     return 0;
 }
@@ -93,7 +100,11 @@ int main(int argc, const char * argv[]) {
     
     curl_global_init( CURL_GLOBAL_ALL );
     
-    char url[] = "http://www.liacs.nl/~mlew";
+    char url[128];
+    cout << "Type URL to find links:" << endl;
+    cin >> url;
+    
+    //char url[] = "http://www.liacs.nl/~mlew";
     char *htmlpage = GetWebPage(url);
     GetLinksFromWebPage(htmlpage, url);
     
