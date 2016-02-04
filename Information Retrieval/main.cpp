@@ -14,13 +14,10 @@
 #include <curl/curl.h>
 using namespace std;
 
-//static string readerBuffer; //
-
 static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
     ((string*)userp)->append((char*)buffer, realsize);
-    //readerBuffer.append((char*)buffer, realsize); //
     return realsize;
 }
 
@@ -38,16 +35,12 @@ char *GetWebPage(char *myurl)
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
    
-    //char stringHTML[readBufferHTML.size()];
-    //strcpy(stringHTML, readBufferHTML.c_str());
-    //char *HTMLpointer = stringHTML;
     char *HTMLpointer = (char*)malloc(readBufferHTML.size());
     strcpy(HTMLpointer,readBufferHTML.c_str());
     
     if(strlen(HTMLpointer) != 0)
     {
         cout << "Successfully obtained HTML!" << endl;
-        //cout << "Pointer size in first: " << strlen(HTMLpointer); //
         return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(....)
     }
     else
@@ -69,12 +62,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
     
-    //Pointer uit eerst funct wordt niet volledig overgepaast --> stack
-    //Google: c++ pointer to stack variable
-    //char stringHTML[readerBuffer.size()]; //
-    //strcpy(stringHTML, readerBuffer.c_str()); //
-    
-    //cout << "Pointer size in second: " << strlen(myhtmlpage);
+    string total;
 
     for(int i = 0; i < strlen(myhtmlpage); ++i)
     {
@@ -84,14 +72,37 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                 if (html_parser_is_in(hsp, HTML_VALUE_ENDED))
                 {
                     val[html_parser_val_length(hsp)] = '\0';
-                    printf("%s\n", val);
+                    if(val[0] == '/')
+                    {
+                        char temp[strlen(val)];
+                        strcpy(temp, val); //strcpy to assign char arrays!
+                        strcpy(val, myurl);
+                        strcat(val, temp); //strcat is kinda "append"
+                    }
+                    strcat(val, "\n");
+                    total.append(val);
+                    cout << val;
                 }
     }
-    //Al de opgevraagde links returnen en als er geen gevonden zijn --> null returnen
-    
     html_parser_cleanup(hsp);
     free(myhtmlpage);
     
+    char *LINKSpointer = (char*)malloc(total.size());
+    strcpy(LINKSpointer, total.c_str());
+    
+    if(strlen(LINKSpointer) != 0)
+    {
+        return LINKSpointer;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
+{
+    //Done with GetLinksFromWebPage. Probably at if value[0] == any character? check --> http://www.liacs.nl
     return 0;
 }
 
