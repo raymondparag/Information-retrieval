@@ -79,6 +79,18 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                         strcpy(val, myurl);
                         strcat(val, temp); //strcat is kinda "append"
                     }
+                    else if(val[0] != 'h') //extra check for anything else than just /
+                    {
+                        char temp[strlen(val)];
+                        strcpy(temp, val);
+                        
+                        char temp2[strlen(myurl)];
+                        strcpy(temp2, myurl);
+                        strcat(temp2, "/");
+                        
+                        strcpy(val, temp2);
+                        strcat(val, temp);
+                    }
                     strcat(val, "\n");
                     total.append(val);
                     cout << val;
@@ -102,7 +114,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
 
 char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
 {
-    //Done with GetLinksFromWebPage. Probably at if value[0] == any character? check --> http://www.liacs.nl
+    //Done with GetLinksFromWebPage. Now continue with this function!
     return 0;
 }
 
