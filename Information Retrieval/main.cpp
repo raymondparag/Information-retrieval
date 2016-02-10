@@ -41,7 +41,7 @@ char *GetWebPage(char *myurl)
     if(strlen(HTMLpointer) != 0)
     {
         cout << "Successfully obtained HTML!" << endl;
-        return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(....)
+        return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
     else
     {
@@ -57,7 +57,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[2]; char attr[4]; char val[128];
+    char tag[1]; char attr[4]; char val[128];
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -104,7 +104,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     
     if(strlen(LINKSpointer) != 0)
     {
-        return LINKSpointer;
+        return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
     else
     {
@@ -114,8 +114,64 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
 
 char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
 {
-    //Done with GetLinksFromWebPage. Now continue with this function!
-    return 0;
+    HTMLSTREAMPARSER *hsp = html_parser_init();
+    
+    html_parser_set_tag_to_lower(hsp, 1);
+    html_parser_set_attr_to_lower(hsp, 1);
+    
+    char tag[3]; char attr[3]; char val[128];
+    html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
+    html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
+    html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
+    
+    string total;
+    
+    for(int i = 0; i < strlen(myhtmlpage); ++i)
+    {
+        html_parser_char_parse(hsp, myhtmlpage[i]);
+        if (html_parser_cmp_tag(hsp, "img", 3))
+            if (html_parser_cmp_attr(hsp, "src", 3))
+                if (html_parser_is_in(hsp, HTML_VALUE_ENDED))
+                {
+                    val[html_parser_val_length(hsp)] = '\0';
+                    if(val[0] == '/')
+                    {
+                        char temp[strlen(val)];
+                        strcpy(temp, val); //strcpy to assign char arrays!
+                        strcpy(val, myurl);
+                        strcat(val, temp); //strcat is kinda "append"
+                    }
+                    else if(val[0] != 'h') //extra check for anything else than just /
+                    {
+                        char temp[strlen(val)];
+                        strcpy(temp, val);
+                        
+                        char temp2[strlen(myurl)];
+                        strcpy(temp2, myurl);
+                        strcat(temp2, "/");
+                        
+                        strcpy(val, temp2);
+                        strcat(val, temp);
+                    }
+                    strcat(val, "\n");
+                    total.append(val);
+                    cout << val;
+                }
+    }
+    html_parser_cleanup(hsp);
+    free(myhtmlpage);
+    
+    char *LINKSpointer = (char*)malloc(total.size());
+    strcpy(LINKSpointer, total.c_str());
+    
+    if(strlen(LINKSpointer) != 0)
+    {
+        return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
@@ -129,7 +185,8 @@ int main(int argc, const char * argv[]) {
     
     //char url[] = "http://www.liacs.nl/~mlew";
     char *htmlpage = GetWebPage(url);
-    GetLinksFromWebPage(htmlpage, url);
+    //GetLinksFromWebPage(htmlpage, url);
+    GetImageLinksFromWebPage(htmlpage, url);
     
     cout << " \n";
     return 0;
