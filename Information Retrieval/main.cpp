@@ -2,7 +2,7 @@
 //  main.cpp
 //  Information Retrieval
 //
-//  Created by Raymond Parag on 29-01-16.
+//  Created by Raymond Parag.
 //  Copyright © 2016 Raymond Parag. All rights reserved.
 //
 
@@ -34,13 +34,12 @@ char *GetWebPage(char *myurl)
     
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
-   
-    char *HTMLpointer = (char*)malloc(readBufferHTML.size());
-    strcpy(HTMLpointer,readBufferHTML.c_str());
     
-    if(strlen(HTMLpointer) != 0)
+    if(results == 0)
     {
         cout << "Successfully obtained HTML!" << endl;
+        char *HTMLpointer = (char*)malloc(readBufferHTML.size());
+        strcpy(HTMLpointer,readBufferHTML.c_str());
         return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
     else
@@ -97,13 +96,12 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                 }
     }
     html_parser_cleanup(hsp);
-    free(myhtmlpage);
+    //free(myhtmlpage);
     
-    char *LINKSpointer = (char*)malloc(total.size());
-    strcpy(LINKSpointer, total.c_str());
-    
-    if(strlen(LINKSpointer) != 0)
+    if(total.length() != 0)
     {
+        char *LINKSpointer = (char*)malloc(total.size());
+        strcpy(LINKSpointer, total.c_str());
         return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
     else
@@ -159,13 +157,12 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
                 }
     }
     html_parser_cleanup(hsp);
-    free(myhtmlpage);
+    //free(myhtmlpage);
     
-    char *LINKSpointer = (char*)malloc(total.size());
-    strcpy(LINKSpointer, total.c_str());
-    
-    if(strlen(LINKSpointer) != 0)
+    if(total.length() != 0)
     {
+        char *LINKSpointer = (char*)malloc(total.size());
+        strcpy(LINKSpointer, total.c_str());
         return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
     else
@@ -185,9 +182,11 @@ int main(int argc, const char * argv[]) {
     
     //char url[] = "http://www.liacs.nl/~mlew";
     char *htmlpage = GetWebPage(url);
-    //GetLinksFromWebPage(htmlpage, url);
+    GetLinksFromWebPage(htmlpage, url);
+    cout << endl;
     GetImageLinksFromWebPage(htmlpage, url);
     
+    free(htmlpage);
     cout << " \n";
     return 0;
 }
