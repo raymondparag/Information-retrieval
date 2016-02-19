@@ -16,7 +16,7 @@
 #define MAXQSIZE 9000000
 #define MAXURL 100000
 #define MAXPAGESIZE 20000
-#define MAXDOWNLOADS 30
+#define MAXDOWNLOADS 300
 
 using namespace std;
 
@@ -43,7 +43,7 @@ char *GetWebPage(char *myurl)
     
     if(results == 0)
     {
-        cout << "Successfully obtained HTML!" << endl;
+        //cout << "Successfully obtained HTML!" << endl;
         char *HTMLpointer = (char*)malloc(readBufferHTML.size());
         strcpy(HTMLpointer,readBufferHTML.c_str());
         return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
@@ -106,7 +106,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     
     if(total.length() != 0)
     {
-        cout << "Success getting weblinks!" << endl;
+        //cout << "Success getting weblinks!" << endl;
         char *LINKSpointer = (char*)malloc(total.size());
         strcpy(LINKSpointer, total.c_str());
         return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
@@ -169,7 +169,7 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     
     if(total.length() != 0)
     {
-        cout << "Success getting imagelinks!" << endl;
+        //cout << "Success getting imagelinks!" << endl;
         char *LINKSpointer = (char*)malloc(total.size());
         strcpy(LINKSpointer, total.c_str());
         return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
@@ -178,6 +178,24 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     {
         cout << "Failed getting imagelinks!" << endl;
         return 0;
+    }
+}
+
+void AppendLinks(char *p, char *q, char *weblinks) //works
+{
+    if(weblinks != NULL)
+    {
+        long size = strlen(weblinks) + strlen(q) + 1;
+        if(size < MAXQSIZE)
+        {
+            strcat(q, weblinks);
+            strcat(q, "\0");
+        }
+        else
+        {
+            cout << "Reached end of queue ... exiting" << endl;
+            return exit(0);
+        }
     }
 }
 
@@ -200,21 +218,31 @@ int QSize(char *q) //works
 
 int GetNextURL(char *p, char *q, char *myurl) //works
 {
+    if(p == NULL || p[0] == '\0')
+    {
+        strcpy(myurl, "http://127.0.0.1");
+        cout << "No URL found in p, exiting..." << endl;
+        return 0;
+    }
+    
     for(int i = 0; i < MAXURL; ++i)
     {
+        if(i > strlen(p)) //check end of queue?
+        {
+            cout << "i already passed p size, exiting..." << endl;
+            return 0;
+        }
+        
         if(p[i] == '\n')
         {
-            //myurl[i] = p[i];
-            myurl[i] = '\0'; //previous it was myurl[i+1] = '\0';
+            myurl[i] = '\0';
             return 1;
         }
         else
         {
             myurl[i] = p[i];
-            //cout << p[i] << endl;
         }
     }
-    //strcpy(myurl, "http://127.0.0.1"); //DOESNT MAKE SENSE
     return 0;
 }
 
@@ -222,10 +250,25 @@ char *ShiftP(char *p, char *q) //works
 {
     for(int i = 0; i < MAXURL; ++i)
     {
+        if(i > strlen(p)) //check end of queue?
+        {
+            cout << "i already passed p size, exiting..." << endl;
+            return 0;
+        }
+        
         if(p[i] == '\n')
         {
-            p = p + i + 1;
-            return p;
+            if(i + 1 > strlen(p))
+            {
+                cout << "ShiftP not available, exiting..." << endl;
+                return 0;
+            }
+            else
+            {
+                p = p + i + 1;
+                return p;
+            }
+            
         }
     }
     return 0;
@@ -250,7 +293,8 @@ int main(int argc, const char * argv[]) {
     //char url[MAXURL];
     char urlspace[MAXURL];
     char *htmlpage, *weblinks;
-    int qs, ql;
+    int qs;
+    long ql;
     
     char *q = (char*)malloc(MAXQSIZE);
     q[0] = '\0';
@@ -258,8 +302,15 @@ int main(int argc, const char * argv[]) {
     
     cout << "Type URL to find links:" << endl;
     cin >> urlspace;
-    
-    cout << "Initial web URL: " << urlspace << endl;
+    if(strstr(urlspace, "http") != NULL || strstr(urlspace, "www") != NULL)
+    {
+        cout << "Initial web URL: " << urlspace << endl;
+    }
+    else
+    {
+        cout << "Give a valid http link! exiting..." << endl;
+        return 0;
+    }
     
     strcat(q, urlspace);
     strcat(q, "\n");
@@ -271,32 +322,36 @@ int main(int argc, const char * argv[]) {
         ql = strlen(q);
         
         cout << "Download #: " << i << " Weblinks: " << qs << " Queue Size: " << ql << endl;
-        GetNextURL(p, q, url);
-        p = ShiftP(p, q);
-        
-        if((strstr(url,"leidenuniv.nl") != NULL || (strstr(url,"liacs.nl")) != NULL))
+        if(GetNextURL(p, q, url) == 0)
         {
+            return 0;
+        }
+        p = ShiftP(p, q);
+        cout << " DWNLD URL: " << url << endl;
+        
+        //if((strstr(url,"leidenuniv.nl") != NULL || (strstr(url,"liacs.nl")) != NULL) || (strstr(url, "universiteitleiden.nl")) != NULL)
+        //{
             htmlpage = GetWebPage(url);
             if(htmlpage==NULL)
             {
                 cout << "The downloaded webpage was NULL" << endl;
-                return 0;
+                //return 0; //commented for skip dead links!
             }
             else
             {
                 weblinks = GetLinksFromWebPage(htmlpage, url);
-                strcat(q, weblinks);
-                strcat(q, "\0");
+                AppendLinks(p, q, weblinks);
+                free(weblinks);
             }
-        }
-        else
-        {
-            cout << "Not allowed in domains: " << url << endl;
-        }
+            free(htmlpage);
+        //}
+        //else
+        //{
+        //    cout << "Not allowed in domains: " << url << " exiting..." << endl;
+        //    return 0;
+        //}
     }
     
-    //free(htmlpage);
-    //free(weblinks);
     free(q);
     cout << " \n";
     return 0;
