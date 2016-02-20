@@ -62,7 +62,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[1]; char attr[4]; char val[512]; //<----- could create issue if val size too short
+    char tag[1]; char attr[4]; char val[1024]; //<----- could create issue if val size too short
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -125,7 +125,7 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[3]; char attr[3]; char val[512]; //<----- could create issue if val size too short
+    char tag[3]; char attr[3]; char val[1024]; //<----- could create issue if val size too short
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -183,8 +183,6 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
 
 void AppendLinks(char *p, char *q, char *weblinks) //works
 {
-    if(weblinks != NULL)
-    {
         long size = strlen(weblinks) + strlen(q) + 1;
         if(size < MAXQSIZE)
         {
@@ -196,7 +194,6 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
             cout << "Reached end of queue ... exiting" << endl;
             return exit(0);
         }
-    }
 }
 
 int QSize(char *q) //works
@@ -278,6 +275,7 @@ int main(int argc, const char * argv[]) {
     
     curl_global_init( CURL_GLOBAL_ALL );
     
+    //Homework 2
     //char url[128];
     //cout << "Type URL to find links:" << endl;
     //cin >> url;
@@ -288,7 +286,7 @@ int main(int argc, const char * argv[]) {
     //char *imagelings = GetImageLinksFromWebPage(htmlpage, url);
     
     //-------------------------------------------------------------
-    
+    //Homework 3
     //char *url;
     //char url[MAXURL];
     char urlspace[MAXURL];
@@ -329,27 +327,34 @@ int main(int argc, const char * argv[]) {
         p = ShiftP(p, q);
         cout << " DWNLD URL: " << url << endl;
         
-        //if((strstr(url,"leidenuniv.nl") != NULL || (strstr(url,"liacs.nl")) != NULL) || (strstr(url, "universiteitleiden.nl")) != NULL)
-        //{
+        if((strstr(url,"leidenuniv.nl") != NULL || (strstr(url,"liacs.nl")) != NULL || (strstr(url, "universiteitleiden.nl")) != NULL || (strstr(url, "leiden.edu")) != NULL || (strstr(url, "mastersinleiden.nl")) != NULL))
+        {
             htmlpage = GetWebPage(url);
             if(htmlpage==NULL)
             {
-                cout << "The downloaded webpage was NULL" << endl;
+                cout << "The downloaded webpage was NULL, skipping..." << endl;
                 //return 0; //commented for skip dead links!
             }
             else
             {
                 weblinks = GetLinksFromWebPage(htmlpage, url);
-                AppendLinks(p, q, weblinks);
+                if(weblinks != NULL)
+                {
+                    AppendLinks(p, q, weblinks);
+                }
+                else
+                {
+                    cout << "No weblinks found for the given htmlpage, skipping..." << endl;
+                }
                 free(weblinks);
             }
             free(htmlpage);
-        //}
-        //else
-        //{
-        //    cout << "Not allowed in domains: " << url << " exiting..." << endl;
-        //    return 0;
-        //}
+        }
+        else
+        {
+            cout << "Not allowed in domains: " << url << " skipping..." << endl;
+            //return 0; //commented for skip not valid domains!
+        }
     }
     
     free(q);
