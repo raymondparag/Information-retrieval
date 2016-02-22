@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		141831D51C5E698B000ED313 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C73D1C5BA07900C8433C /* main.cpp */; };
+		14E2E3801C7B935C00CFE246 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 14E2E37F1C7B935C00CFE246 /* Makefile */; };
 		14F3C7481C5BA09E00C8433C /* htmlstreamparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C7451C5BA09E00C8433C /* htmlstreamparser.cpp */; };
 		14F3C74A1C5BA0CA00C8433C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F3C7491C5BA0CA00C8433C /* libcurl.tbd */; };
 /* End PBXBuildFile section */
@@ -25,6 +26,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14E2E37F1C7B935C00CFE246 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		14F3C73A1C5BA07900C8433C /* Information Retrieval */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Information Retrieval"; sourceTree = BUILT_PRODUCTS_DIR; };
 		14F3C73D1C5BA07900C8433C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		14F3C7441C5BA09E00C8433C /* htmlprocess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlprocess.cpp; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		14F3C73C1C5BA07900C8433C /* Information Retrieval */ = {
 			isa = PBXGroup;
 			children = (
+				14E2E37F1C7B935C00CFE246 /* Makefile */,
 				14F3C7441C5BA09E00C8433C /* htmlprocess.cpp */,
 				14F3C7451C5BA09E00C8433C /* htmlstreamparser.cpp */,
 				14F3C7461C5BA09E00C8433C /* htmlstreamparser.h */,
@@ -129,6 +132,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14E2E3801C7B935C00CFE246 /* Makefile in Sources */,
 				14F3C7481C5BA09E00C8433C /* htmlstreamparser.cpp in Sources */,
 				141831D51C5E698B000ED313 /* main.cpp in Sources */,
 			);
