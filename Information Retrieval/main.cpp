@@ -44,7 +44,7 @@ char *GetWebPage(char *myurl)
     if(results == 0)
     {
         //cout << "Successfully obtained HTML!" << endl;
-        char *HTMLpointer = (char*)malloc(readBufferHTML.size());
+        char *HTMLpointer = (char*)malloc(readBufferHTML.size() + 1);
         strcpy(HTMLpointer,readBufferHTML.c_str());
         return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
@@ -107,7 +107,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     if(total.length() != 0)
     {
         //cout << "Success getting weblinks!" << endl;
-        char *LINKSpointer = (char*)malloc(total.size());
+        char *LINKSpointer = (char*)malloc(total.size() + 1);
         strcpy(LINKSpointer, total.c_str());
         return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
@@ -170,7 +170,7 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     if(total.length() != 0)
     {
         //cout << "Success getting imagelinks!" << endl;
-        char *LINKSpointer = (char*)malloc(total.size());
+        char *LINKSpointer = (char*)malloc(total.size() + 1);
         strcpy(LINKSpointer, total.c_str());
         return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
     }
@@ -273,7 +273,7 @@ char *ShiftP(char *p, char *q) //works
 
 int main(int argc, const char * argv[]) {
     
-    curl_global_init( CURL_GLOBAL_ALL );
+    //curl_global_init( CURL_GLOBAL_ALL );
     
     //Homework 2
     //char url[128];
@@ -294,7 +294,7 @@ int main(int argc, const char * argv[]) {
     int qs;
     long ql;
     
-    char *q = (char*)malloc(MAXQSIZE);
+    char *q = (char*)malloc(MAXQSIZE + 1);
     q[0] = '\0';
     char *p = q;
     
