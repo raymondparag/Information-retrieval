@@ -186,8 +186,42 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
         long size = strlen(weblinks) + strlen(q) + 1;
         if(size < MAXQSIZE)
         {
-            strcat(q, weblinks);
+            string total;
+            for(int i = 0; i < strlen(weblinks); ++i)
+            {
+                if(weblinks[i] == '\n')
+                {
+                    total.append("\n");
+                    //string horse=total;
+                    //horse.append("/");
+                    if(strstr(q, total.c_str())) //ORS OFZO VOOR / EN // OP EINDE
+                    {
+                        //cout << "ALREADY EXISTS! " << total << endl;
+                    }
+                    else
+                    {
+                        strcat(q, total.c_str());
+                        //strcat(q,"\n");
+                    }
+                    total.clear();
+                    //horse.clear();
+                }
+                else
+                {
+                    char temp = weblinks[i];
+                    total.append(&temp);
+                }
+            }
             strcat(q, "\0");
+           // if(strstr(q, weblinks)!=NULL)
+           // {
+           //     cout<<"Raak"<<endl;
+           // }
+           // else
+           // {
+            //    strcat(q, weblinks); //enkel dit goed
+           //     strcat(q, "\0"); //enkel dit goed
+           // }
         }
         else
         {
