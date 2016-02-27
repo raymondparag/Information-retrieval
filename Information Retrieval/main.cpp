@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "htmlstreamparser.h"
 #include <curl/curl.h>
+#include <string>
 
 #define MAXQSIZE 9000000
 #define MAXURL 100000
@@ -187,41 +188,40 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
         if(size < MAXQSIZE)
         {
             string total;
+            
             for(int i = 0; i < strlen(weblinks); ++i)
             {
                 if(weblinks[i] == '\n')
                 {
-                    total.append("\n");
-                    //string horse=total;
-                    //horse.append("/");
-                    if(strstr(q, total.c_str())) //ORS OFZO VOOR / EN // OP EINDE
+                
+                checkagain:
+                    if(total.back() == '/') //wellicht ook #
+                    {
+                        total.pop_back();
+                        goto checkagain;
+                    }
+                    
+                    if(strstr(q, total.c_str()) != NULL)
                     {
                         //cout << "ALREADY EXISTS! " << total << endl;
                     }
+                   
                     else
                     {
                         strcat(q, total.c_str());
-                        //strcat(q,"\n");
+                        strcat(q, "\n");
                     }
                     total.clear();
-                    //horse.clear();
                 }
                 else
                 {
-                    char temp = weblinks[i];
-                    total.append(&temp);
+                    total += *&weblinks[i];
                 }
             }
             strcat(q, "\0");
-           // if(strstr(q, weblinks)!=NULL)
-           // {
-           //     cout<<"Raak"<<endl;
-           // }
-           // else
-           // {
+            
             //    strcat(q, weblinks); //enkel dit goed
            //     strcat(q, "\0"); //enkel dit goed
-           // }
         }
         else
         {
@@ -305,9 +305,41 @@ char *ShiftP(char *p, char *q) //works
     return 0;
 }
 
-int main(int argc, const char * argv[]) {
+void parseWeblinkstoFile() //Dit wordt op het laatst 1 keer uitgevoerd!
+{
+    //CREATE PATH
+    string path = __FILE__;
+    size_t found = path.find_last_of("/\\");
+    path = path.substr(0, found);
+    path += "/webindex/";
     
-    //curl_global_init( CURL_GLOBAL_ALL );
+    //TEST STRING
+    char test[] = "http://www.liacs.nl/masters-education";
+    char *pch = strtok(test, " http:.-/#"); //first exclude htt://
+    
+    FILE *fp;
+    
+    while (pch != NULL)
+    {
+        cout << pch << endl;
+        
+        string filename = path;
+        filename += pch;
+        filename += ".txt";
+        cout << filename << endl;
+        
+        fp = fopen(filename.c_str(), "a");
+        if(fp != NULL)
+        {
+            fprintf(fp,"%s\n", test); //test is ineens opgegeten HIER GEBLEVEN!
+        }
+        
+        pch = strtok(NULL, " .-/#");
+    }
+    fclose(fp);
+}
+
+int main(int argc, const char * argv[]) {
     
     //Homework 2
     //char url[128];
@@ -320,10 +352,11 @@ int main(int argc, const char * argv[]) {
     //char *imagelings = GetImageLinksFromWebPage(htmlpage, url);
     
     //-------------------------------------------------------------
+    parseWeblinkstoFile();
     //Homework 3
     //char *url;
     //char url[MAXURL];
-    char urlspace[MAXURL];
+    /*char urlspace[MAXURL];
     char *htmlpage, *weblinks;
     int qs;
     long ql;
@@ -391,7 +424,7 @@ int main(int argc, const char * argv[]) {
         }
     }
     
-    free(q);
+    free(q);*/
     cout << " \n";
     return 0;
 }
