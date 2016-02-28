@@ -6,7 +6,8 @@ CXX=g++
 CPPFLAGS=-lcurl
 
 main: main.cpp
-	$(CXX) -o webspider main.cpp htmlstreamparser.cpp  $(CPPFLAGS)
+	$(CXX) -std=c++11 -o webspider main.cpp htmlstreamparser.cpp  $(CPPFLAGS)
 
-
+webquery: webquery.cpp
+	$(CXX) -std=c++11 -o webquery webquery.cpp
 

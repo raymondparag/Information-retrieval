@@ -17,7 +17,7 @@
 #define MAXQSIZE 9000000
 #define MAXURL 100000
 #define MAXPAGESIZE 20000
-#define MAXDOWNLOADS 300
+#define MAXDOWNLOADS 5
 
 using namespace std;
 
@@ -195,7 +195,7 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
                 {
                 
                 checkagain:
-                    if(total.back() == '/') //wellicht ook #
+                    if(total.back() == '/')// || total.back() == '#') //wellicht ook #
                     {
                         total.pop_back();
                         goto checkagain;
@@ -215,7 +215,7 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
                 }
                 else
                 {
-                    total += *&weblinks[i];
+                    total += weblinks[i]; //voorheen *& ervoor
                 }
             }
             strcat(q, "\0");
@@ -305,7 +305,7 @@ char *ShiftP(char *p, char *q) //works
     return 0;
 }
 
-void parseWeblinkstoFile() //Dit wordt op het laatst 1 keer uitgevoerd!
+void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
 {
     //CREATE PATH
     string path = __FILE__;
@@ -313,9 +313,84 @@ void parseWeblinkstoFile() //Dit wordt op het laatst 1 keer uitgevoerd!
     path = path.substr(0, found);
     path += "/webindex/";
     
-    //TEST STRING
-    char test[] = "http://www.liacs.nl/masters-education";
-    char *pch = strtok(test, " http:.-/#"); //first exclude htt://
+    //LOOP THROUGH QUEUE AND PARSE LINKS TO FILE
+    FILE *fp;
+    string total;
+    for(int i = 0;i < strlen(q); ++i)
+    {
+        if(q[i] == '\n')
+        {
+            string stringcopy = total; //wellicht \0 erbij?
+            stringcopy += "\n";
+            
+            if(total.find_first_of("/") == 5 || total.find_first_of("/") == 6)
+            {
+                if(total.find_first_of("/") == 5)
+                {
+                    total.erase(0,7);
+                }
+                else
+                {
+                    total.erase(0,8);
+                }
+            }
+            
+            char temp_copy[total.size()];
+            strcpy(temp_copy, total.c_str());
+            
+            //char *split = strtok(temp_copy, " https:.-/#");
+            char *split = strtok(temp_copy, " .-/#");
+            while(split != NULL)
+            {
+                //cout << split << endl;
+                string filename = path;
+                filename += split;
+                filename += ".txt";
+                //cout << filename << endl;
+                
+                fp = fopen(filename.c_str(), "a");
+                if(fp != NULL)
+                {
+                    fprintf(fp,"%s\n", stringcopy.c_str());
+                }
+                split = strtok(NULL, " .-/#");
+            }
+            total.clear();
+        }
+        
+        else
+        {
+            total += q[i];
+        }
+    }
+    fclose(fp);
+    
+    
+    
+    
+    /*//TEST STRING
+    char test[] = "https://usis.leidenuniv.nl/psp/S040PRD/?cmd=login&languageCd=DUT";
+    char test1[strlen(test)];
+    strcpy(test1, test);
+    //char *pch = strtok(test1, " https:.-/#"); //first exclude http://
+    
+    string poep = test;
+    if(poep.find_first_of("/") == 5 || poep.find_first_of("/") == 6)
+    {
+        if(poep.find_first_of("/") == 5)
+        {
+            poep.erase(0,7);
+        }
+        else
+        {
+            poep.erase(0,8);
+        }
+    }
+    cout << poep << endl;
+    strcpy(test1, poep.c_str());
+    
+    char *pch = strtok(test1, ".-/#");
+    
     
     FILE *fp;
     
@@ -326,17 +401,17 @@ void parseWeblinkstoFile() //Dit wordt op het laatst 1 keer uitgevoerd!
         string filename = path;
         filename += pch;
         filename += ".txt";
-        cout << filename << endl;
+        //cout << filename << endl;
         
-        fp = fopen(filename.c_str(), "a");
+        //fp = fopen(filename.c_str(), "a");
         if(fp != NULL)
         {
-            fprintf(fp,"%s\n", test); //test is ineens opgegeten HIER GEBLEVEN!
+            //fprintf(fp,"%s\n", test);
         }
         
         pch = strtok(NULL, " .-/#");
     }
-    fclose(fp);
+    fclose(fp);*/
 }
 
 int main(int argc, const char * argv[]) {
@@ -346,17 +421,13 @@ int main(int argc, const char * argv[]) {
     //cout << "Type URL to find links:" << endl;
     //cin >> url;
     
-    //char url[] = "http://www.liacs.nl/~mlew";
     //char *htmlpage = GetWebPage(url);
     //char *weblinks = GetLinksFromWebPage(htmlpage, url);
     //char *imagelings = GetImageLinksFromWebPage(htmlpage, url);
     
     //-------------------------------------------------------------
-    parseWeblinkstoFile();
     //Homework 3
-    //char *url;
-    //char url[MAXURL];
-    /*char urlspace[MAXURL];
+    char urlspace[MAXURL];
     char *htmlpage, *weblinks;
     int qs;
     long ql;
@@ -423,8 +494,10 @@ int main(int argc, const char * argv[]) {
             //return 0; //commented for skip not valid domains!
         }
     }
+    //char *q;
+    parseWeblinkstoFile(q);
     
-    free(q);*/
+    free(q);
     cout << " \n";
     return 0;
 }
