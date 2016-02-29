@@ -6,6 +6,8 @@
 //  Copyright © 2016 Raymond Parag. All rights reserved.
 //
 
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <iostream>
 #include <memory>
 #include <stdlib.h>
@@ -17,7 +19,7 @@
 #define MAXQSIZE 9000000
 #define MAXURL 100000
 #define MAXPAGESIZE 20000
-#define MAXDOWNLOADS 5
+#define MAXDOWNLOADS 2000
 
 using namespace std;
 
@@ -38,6 +40,7 @@ char *GetWebPage(char *myurl)
     curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(easyhandle, CURLOPT_WRITEDATA, &readBufferHTML);
     curl_easy_setopt(easyhandle, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(easyhandle, CURLOPT_TIMEOUT, 10); //Nog niet gechecked...
     
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
@@ -307,11 +310,14 @@ char *ShiftP(char *p, char *q) //works
 
 void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
 {
+    mkdir("webindex", 0700);
     //CREATE PATH
     string path = __FILE__;
     size_t found = path.find_last_of("/\\");
     path = path.substr(0, found);
     path += "/webindex/";
+    //string path = "webindex/"; // Linux
+    
     
     //LOOP THROUGH QUEUE AND PARSE LINKS TO FILE
     FILE *fp;
@@ -338,8 +344,7 @@ void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
             char temp_copy[total.size()];
             strcpy(temp_copy, total.c_str());
             
-            //char *split = strtok(temp_copy, " https:.-/#");
-            char *split = strtok(temp_copy, " .-/#");
+            char *split = strtok(temp_copy, " .-/#&=?_"); //.-/#
             while(split != NULL)
             {
                 //cout << split << endl;
@@ -353,7 +358,7 @@ void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
                 {
                     fprintf(fp,"%s\n", stringcopy.c_str());
                 }
-                split = strtok(NULL, " .-/#");
+                split = strtok(NULL, " .-/#&=?_");
             }
             total.clear();
         }
