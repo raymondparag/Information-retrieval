@@ -7,7 +7,7 @@ The code is written with the help of various examples/documentations from the co
 
 Libraries used are: Libcurl [[Link]](http://curl.haxx.se/libcurl/), htmlstreamparser [[Link]](https://code.google.com/archive/p/htmlstreamparser/) and mongoose [[Link]] (http://code.google.com/p/mongoose/).
 
-##Usage on OSX with Xcode
+##Installation of libcurl with htmlstreamparser on OSX(Xcode)
 1. Download **curl-7.47.0.zip** from the Libcurl site
 2. Unzip the file
 3. Run the following commands in a terminal in the downloaded folder
