@@ -349,114 +349,6 @@ char *ShiftP(char *p, char *q) //works
     return 0;
 }
 
-void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
-{
-    mkdir("webindex", 0700);
-    //CREATE PATH
-    string path = __FILE__;
-    size_t found = path.find_last_of("/\\");
-    path = path.substr(0, found);
-    path += "/webindex/";
-    //string path = "webindex/"; // Linux
-    
-    
-    //LOOP THROUGH QUEUE AND PARSE LINKS TO FILE
-    FILE *fp;
-    string total;
-    for(int i = 0;i < strlen(q); ++i)
-    {
-        if(q[i] == '\n')
-        {
-            string stringcopy = total; //wellicht \0 erbij?
-            stringcopy += "\n";
-            
-            if(total.find_first_of("/") == 5 || total.find_first_of("/") == 6)
-            {
-                if(total.find_first_of("/") == 5)
-                {
-                    total.erase(0,7);
-                }
-                else
-                {
-                    total.erase(0,8);
-                }
-            }
-            
-            char temp_copy[total.size()];
-            strcpy(temp_copy, total.c_str());
-            
-            char *split = strtok(temp_copy, " .-/#&=?_%;"); //.-/#
-            while(split != NULL)
-            {
-                //cout << split << endl;
-                string filename = path;
-                filename += split;
-                filename += ".txt";
-                //cout << filename << endl;
-                
-                fp = fopen(filename.c_str(), "a");
-                if(fp != NULL)
-                {
-                    fprintf(fp,"%s\n", stringcopy.c_str());
-                }
-                split = strtok(NULL, " .-/#&=?_%;");
-            }
-            total.clear();
-        }
-        
-        else
-        {
-            total += q[i];
-        }
-    }
-    fclose(fp);
-    
-    /*//TEST STRING
-    char test[] = "https://usis.leidenuniv.nl/psp/S040PRD/?cmd=login&languageCd=DUT";
-    char test1[strlen(test)];
-    strcpy(test1, test);
-    //char *pch = strtok(test1, " https:.-/#"); //first exclude http://
-    
-    string poep = test;
-    if(poep.find_first_of("/") == 5 || poep.find_first_of("/") == 6)
-    {
-        if(poep.find_first_of("/") == 5)
-        {
-            poep.erase(0,7);
-        }
-        else
-        {
-            poep.erase(0,8);
-        }
-    }
-    cout << poep << endl;
-    strcpy(test1, poep.c_str());
-    
-    char *pch = strtok(test1, ".-/#");
-    
-    
-    FILE *fp;
-    
-    while (pch != NULL)
-    {
-        cout << pch << endl;
-        
-        string filename = path;
-        filename += pch;
-        filename += ".txt";
-        //cout << filename << endl;
-        
-        //fp = fopen(filename.c_str(), "a");
-        if(fp != NULL)
-        {
-            //fprintf(fp,"%s\n", test);
-        }
-        
-        pch = strtok(NULL, " .-/#");
-    }
-    fclose(fp);*/
-}
-
 int main(int argc, const char * argv[]) {
     
     //Homework 2
@@ -537,8 +429,6 @@ int main(int argc, const char * argv[]) {
             //return 0; //commented for skip not valid domains!
         }
     }
-    //char *q;
-    //parseWeblinkstoFile(q);
     
     free(q);
     cout << " \n";
