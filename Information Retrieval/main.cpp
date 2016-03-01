@@ -19,7 +19,7 @@
 #define MAXQSIZE 9000000
 #define MAXURL 100000
 #define MAXPAGESIZE 20000
-#define MAXDOWNLOADS 2000
+#define MAXDOWNLOADS 50
 
 using namespace std;
 
@@ -190,6 +190,15 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
         long size = strlen(weblinks) + strlen(q) + 1;
         if(size < MAXQSIZE)
         {
+            mkdir("webindex", 0700);
+            //string path = __FILE__;
+            //size_t found = path.find_last_of("/\\");
+            //path = path.substr(0, found);
+            //path += "/webindex/";
+            string path = "webindex/"; //Linux
+            
+            FILE *fp;
+            
             string total;
             
             for(int i = 0; i < strlen(weblinks); ++i)
@@ -198,7 +207,7 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
                 {
                 
                 checkagain:
-                    if(total.back() == '/')// || total.back() == '#') //wellicht ook #
+                    if(total.back() == '/' || total.back() == '#') //wellicht ook # of zonder
                     {
                         total.pop_back();
                         goto checkagain;
@@ -211,8 +220,43 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
                    
                     else
                     {
-                        strcat(q, total.c_str());
-                        strcat(q, "\n");
+                        strcat(q, total.c_str()); //orig
+                        strcat(q, "\n"); //orig
+                        
+                        string stringcopy = total;
+                        stringcopy += "\n";
+                        
+                        if(total.find_first_of("/") == 5 || total.find_first_of("/") == 6)
+                        {
+                            if(total.find_first_of("/") == 5)
+                            {
+                                total.erase(0,7);
+                            }
+                            else
+                            {
+                                total.erase(0,8);
+                            }
+                        }
+                        
+                        char temp_copy[total.size() + 1];
+                        strcpy(temp_copy, total.c_str());
+                        
+                        char *split = strtok(temp_copy, " .-/#&=?_%;");
+                        while(split != NULL)
+                        {
+                            string filename = path;
+                            filename += split;
+                            filename += ".txt";
+                            
+                            fp = fopen(filename.c_str(), "a");
+                            if(fp!=NULL)
+                            {
+                                fprintf(fp,"%s\n", stringcopy.c_str());
+                                fclose(fp);
+                            }
+                            split = strtok(NULL, " .-/#&=?_%;");
+                        }
+                        
                     }
                     total.clear();
                 }
@@ -222,9 +266,6 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
                 }
             }
             strcat(q, "\0");
-            
-            //    strcat(q, weblinks); //enkel dit goed
-           //     strcat(q, "\0"); //enkel dit goed
         }
         else
         {
@@ -344,7 +385,7 @@ void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
             char temp_copy[total.size()];
             strcpy(temp_copy, total.c_str());
             
-            char *split = strtok(temp_copy, " .-/#&=?_"); //.-/#
+            char *split = strtok(temp_copy, " .-/#&=?_%;"); //.-/#
             while(split != NULL)
             {
                 //cout << split << endl;
@@ -358,7 +399,7 @@ void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
                 {
                     fprintf(fp,"%s\n", stringcopy.c_str());
                 }
-                split = strtok(NULL, " .-/#&=?_");
+                split = strtok(NULL, " .-/#&=?_%;");
             }
             total.clear();
         }
@@ -369,9 +410,6 @@ void parseWeblinkstoFile(char *q) //Dit wordt op het laatst 1 keer uitgevoerd!
         }
     }
     fclose(fp);
-    
-    
-    
     
     /*//TEST STRING
     char test[] = "https://usis.leidenuniv.nl/psp/S040PRD/?cmd=login&languageCd=DUT";
@@ -500,7 +538,7 @@ int main(int argc, const char * argv[]) {
         }
     }
     //char *q;
-    parseWeblinkstoFile(q);
+    //parseWeblinkstoFile(q);
     
     free(q);
     cout << " \n";

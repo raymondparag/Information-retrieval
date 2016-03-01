@@ -23,9 +23,17 @@ $commandstring = './webquery ';
 
 //Using backticks one way for PHP to call an external program and return the output
 $myoutput =`$commandstring`;
+$outputarr = split("\n", $myoutput); //
 
 //echo '<p>(1) ';
-echo nl2br ($myoutput.'<p>');
+//echo nl2br ($myoutput.'<p>');
+//echo nl2br ("<a href='$myoutput'>$myoutput</a>");
+
+foreach($outputarr as &$i)
+{
+	echo "<a href = '$i'>$i</a> <br /n>";	
+}
+
 ?>
 
 </font></body></html>
