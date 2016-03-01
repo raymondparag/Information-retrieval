@@ -3,9 +3,11 @@ This is a repo for the course Multimedia Information Retrieval at University Lei
 
 Programmed using Xcode 7.2 with clang compiler on OSX El Capitan. 
 
-Libraries used are: Libcurl [[Link]](http://curl.haxx.se/libcurl/) and htmlstreamparser [[Link]](https://code.google.com/archive/p/htmlstreamparser/).
+The code is written with the help of various examples/documentation from the course material. 
 
-##Installation
+Libraries used are: Libcurl [[Link]](http://curl.haxx.se/libcurl/), htmlstreamparser [[Link]](https://code.google.com/archive/p/htmlstreamparser/) and mongoose [[Link]] (http://code.google.com/p/mongoose/).
+
+##Usage on OSX with Xcode
 1. Download **curl-7.47.0.zip** from the Libcurl site
 2. Unzip the file
 3. Run the following commands in a terminal in the downloaded folder
@@ -21,3 +23,8 @@ Libraries used are: Libcurl [[Link]](http://curl.haxx.se/libcurl/) and htmlstrea
 9. Done!
 
 For a more detailed installation process go to this [site](http://dahu.co.uk/blog/?p=77).
+
+##Compile instructions on Linux/OSX
+1. Go into the source files folder
+2. make main (this is for the webspider)
+3. make webquery (this is for the search)
