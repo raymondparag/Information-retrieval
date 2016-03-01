@@ -3,7 +3,7 @@ This is a repo for the course Multimedia Information Retrieval at University Lei
 
 Programmed using Xcode 7.2 with clang compiler on OSX El Capitan. 
 
-The code is written with the help of various examples/documentation from the course material. 
+The code is written with the help of various examples/documentations from the course materials. 
 
 Libraries used are: Libcurl [[Link]](http://curl.haxx.se/libcurl/), htmlstreamparser [[Link]](https://code.google.com/archive/p/htmlstreamparser/) and mongoose [[Link]] (http://code.google.com/p/mongoose/).
 
@@ -28,3 +28,9 @@ For a more detailed installation process go to this [site](http://dahu.co.uk/blo
 1. Go into the source files folder
 2. make main (this is for the webspider)
 3. make webquery (this is for the search)
+
+##Mongoose
+To start mongoose simply type ./mongoose
+
+It will (by default) serve documents on port 8080. From a browser you can type: http://localhost:8080/
+
