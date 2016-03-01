@@ -23,6 +23,9 @@
 
 using namespace std;
 
+/*!
+    @brief Callback function for getting HTML data with CURL
+ */
 static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
@@ -30,6 +33,11 @@ static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
     return realsize;
 }
 
+/*!
+    @brief Function for getting HTML data from a given url
+    @return Returns a pointer to the HTML data, or 0 if no
+    HTML data is found
+ */
 char *GetWebPage(char *myurl)
 {
     CURL *easyhandle = curl_easy_init();
@@ -40,17 +48,16 @@ char *GetWebPage(char *myurl)
     curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(easyhandle, CURLOPT_WRITEDATA, &readBufferHTML);
     curl_easy_setopt(easyhandle, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(easyhandle, CURLOPT_TIMEOUT, 10); //Nog niet gechecked...
+    curl_easy_setopt(easyhandle, CURLOPT_TIMEOUT, 10);
     
     results = curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
     
     if(results == 0)
     {
-        //cout << "Successfully obtained HTML!" << endl;
         char *HTMLpointer = (char*)malloc(readBufferHTML.size() + 1);
         strcpy(HTMLpointer,readBufferHTML.c_str());
-        return HTMLpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
+        return HTMLpointer;
     }
     else
     {
@@ -59,6 +66,11 @@ char *GetWebPage(char *myurl)
     }
 }
 
+/*!
+    @brief Function that extracts weblinks from the given HTML data
+    @return Returns a pointer to the weblinks, or 0 if no weblinks 
+    are found
+ */
 char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
 {
     HTMLSTREAMPARSER *hsp = html_parser_init();
@@ -66,7 +78,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[1]; char attr[4]; char val[1024]; //<----- could create issue if val size too short
+    char tag[1]; char attr[4]; char val[1024]; //
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -106,14 +118,12 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                 }
     }
     html_parser_cleanup(hsp);
-    //free(myhtmlpage);
     
     if(total.length() != 0)
     {
-        //cout << "Success getting weblinks!" << endl;
         char *LINKSpointer = (char*)malloc(total.size() + 1);
         strcpy(LINKSpointer, total.c_str());
-        return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
+        return LINKSpointer;
     }
     else
     {
@@ -122,6 +132,11 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     }
 }
 
+/*!
+    @brief Function that extracts imagelinks from the given HTML data
+    @return Returns a pointer to the imagelinks, or 0 if no imagelinks
+    are found
+ */
 char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
 {
     HTMLSTREAMPARSER *hsp = html_parser_init();
@@ -129,7 +144,7 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[3]; char attr[3]; char val[1024]; //<----- could create issue if val size too short
+    char tag[3]; char attr[3]; char val[1024]; //
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -169,14 +184,12 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
                 }
     }
     html_parser_cleanup(hsp);
-    //free(myhtmlpage);
     
     if(total.length() != 0)
     {
-        //cout << "Success getting imagelinks!" << endl;
         char *LINKSpointer = (char*)malloc(total.size() + 1);
         strcpy(LINKSpointer, total.c_str());
-        return LINKSpointer; //Somewhere deallocate pointer at end of function when used --> free(...)
+        return LINKSpointer;
     }
     else
     {
@@ -185,16 +198,20 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     }
 }
 
-void AppendLinks(char *p, char *q, char *weblinks) //works
+/*!
+    @brief Function that appends the weblinks to a queue and
+    parses the .......
+ */
+void AppendLinks(char *p, char *q, char *weblinks)
 {
         long size = strlen(weblinks) + strlen(q) + 1;
         if(size < MAXQSIZE)
         {
             mkdir("webindex", 0700);
-            //string path = __FILE__;
-            //size_t found = path.find_last_of("/\\");
-            //path = path.substr(0, found);
-            //path += "/webindex/";
+            //string path = __FILE__; //OSX
+            //size_t found = path.find_last_of("/\\"); //OSX
+            //path = path.substr(0, found); //OSX
+            //path += "/webindex/"; //OSX
             string path = "webindex/"; //Linux
             
             FILE *fp;
@@ -274,7 +291,7 @@ void AppendLinks(char *p, char *q, char *weblinks) //works
         }
 }
 
-int QSize(char *q) //works
+int QSize(char *q)
 {
     int total = 0;
     for(int i = 0; i < MAXQSIZE; ++i)
@@ -291,7 +308,7 @@ int QSize(char *q) //works
     return total;
 }
 
-int GetNextURL(char *p, char *q, char *myurl) //works
+int GetNextURL(char *p, char *q, char *myurl)
 {
     if(p == NULL || p[0] == '\0')
     {
@@ -321,7 +338,7 @@ int GetNextURL(char *p, char *q, char *myurl) //works
     return 0;
 }
 
-char *ShiftP(char *p, char *q) //works
+char *ShiftP(char *p, char *q)
 {
     for(int i = 0; i < MAXURL; ++i)
     {
@@ -361,6 +378,7 @@ int main(int argc, const char * argv[]) {
     //char *imagelings = GetImageLinksFromWebPage(htmlpage, url);
     
     //-------------------------------------------------------------
+    
     //Homework 3
     char urlspace[MAXURL];
     char *htmlpage, *weblinks;
@@ -406,7 +424,6 @@ int main(int argc, const char * argv[]) {
             if(htmlpage==NULL)
             {
                 cout << "The downloaded webpage was NULL, skipping..." << endl;
-                //return 0; //commented for skip dead links!
             }
             else
             {
@@ -426,7 +443,6 @@ int main(int argc, const char * argv[]) {
         else
         {
             cout << "Not allowed in domains: " << url << " skipping..." << endl;
-            //return 0; //commented for skip not valid domains!
         }
     }
     
