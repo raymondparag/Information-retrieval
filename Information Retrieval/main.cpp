@@ -200,7 +200,10 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
 
 /*!
     @brief Function that appends the weblinks to a queue and
-    parses the .......
+    parses each url in the queue into words and saves it into
+    files. The function checks whether a url is already in the queue
+    before adding it to it. The function exits whenever the size of the
+    weblinks is too big for the queue size.
  */
 void AppendLinks(char *p, char *q, char *weblinks)
 {
@@ -291,6 +294,9 @@ void AppendLinks(char *p, char *q, char *weblinks)
         }
 }
 
+/*!
+    @brief Function that returns the size of the queue
+ */
 int QSize(char *q)
 {
     int total = 0;
@@ -308,6 +314,9 @@ int QSize(char *q)
     return total;
 }
 
+/*!
+    @brief ........
+ */
 int GetNextURL(char *p, char *q, char *myurl)
 {
     if(p == NULL || p[0] == '\0')
