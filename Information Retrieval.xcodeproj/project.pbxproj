@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1410195C1C83715F00C59E8E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C73D1C5BA07900C8433C /* main.cpp */; };
+		14A589871C88E04500A4CECF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C73D1C5BA07900C8433C /* main.cpp */; };
 		14E2E3801C7B935C00CFE246 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 14E2E37F1C7B935C00CFE246 /* Makefile */; };
 		14F3C7481C5BA09E00C8433C /* htmlstreamparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3C7451C5BA09E00C8433C /* htmlstreamparser.cpp */; };
 		14F3C74A1C5BA0CA00C8433C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F3C7491C5BA0CA00C8433C /* libcurl.tbd */; };
@@ -140,7 +140,7 @@
 			files = (
 				14E2E3801C7B935C00CFE246 /* Makefile in Sources */,
 				14F3C7481C5BA09E00C8433C /* htmlstreamparser.cpp in Sources */,
-				1410195C1C83715F00C59E8E /* main.cpp in Sources */,
+				14A589871C88E04500A4CECF /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -98,21 +98,20 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                         char temp[strlen(val)];
                         strcpy(temp, val); //strcpy to assign char arrays!
                        			
-			char end_char = myurl[strlen(myurl)-1];			
-			if(end_char == '/')
-			{
-				myurl[strlen(myurl)-1] = '\0';
-			}			
-
-			strcpy(val, myurl);
-			
+                        char end_char = myurl[strlen(myurl)-1];
+                        if(end_char == '/')
+                        {
+                            myurl[strlen(myurl)-1] = '\0';
+                        }
+                        
+                        strcpy(val, myurl);
                         strcat(val, temp); //strcat is kinda "append"
                     }
-		    if(val[0] == '/' || val[0] == 'w' || val[0] == 'h')
-		    {
-			strcat(val, "\n");
+                    if(val[0] == '/' || val[0] == 'w' || val[0] == 'h')
+                    {
+                        strcat(val, "\n");
                     	total.append(val);
-		    }
+                    }
                 }
     }
     html_parser_cleanup(hsp);
@@ -142,7 +141,7 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[3]; char attr[3]; char val[1024]; //
+    char tag[3]; char attr[3]; char val[MAXURL]; //
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -161,24 +160,21 @@ char *GetImageLinksFromWebPage(char *myhtmlpage, char *myurl)
                     {
                         char temp[strlen(val)];
                         strcpy(temp, val); //strcpy to assign char arrays!
+                        
+                        char end_char = myurl[strlen(myurl)-1];
+                        if(end_char == '/')
+                        {
+                            myurl[strlen(myurl)-1] = '\0';
+                        }
+                        
                         strcpy(val, myurl);
                         strcat(val, temp); //strcat is kinda "append"
                     }
-                    else if(val[0] != 'h') //extra check for anything else than just /
+                    if(val[0] == '/' || val[0] == 'w' || val[0] == 'h')
                     {
-                        char temp[strlen(val)];
-                        strcpy(temp, val);
-                        
-                        char temp2[strlen(myurl)];
-                        strcpy(temp2, myurl);
-                        strcat(temp2, "/");
-                        
-                        strcpy(val, temp2);
-                        strcat(val, temp);
+                        strcat(val, "\n");
+                        total.append(val);
                     }
-                    strcat(val, "\n");
-                    total.append(val);
-                    //cout << val;
                 }
     }
     html_parser_cleanup(hsp);
@@ -228,7 +224,7 @@ void AppendLinks(char *p, char *q, char *weblinks)
                         //cout << "ALREADY EXISTS! " << total << endl;
                     }
                    
-                    else
+                    else //add to queue and parse to file
                     {
                         strcat(q, total.c_str()); //orig
                         strcat(q, "\n"); //orig
@@ -251,9 +247,9 @@ void AppendLinks(char *p, char *q, char *weblinks)
                         char temp_copy[total.size() + 1];
                         strcpy(temp_copy, total.c_str());
                         
-                        char *split = strtok(temp_copy, " .-/#&=?_%!;()@^~*");
+                        char *split = strtok(temp_copy, " .,-/#&=?_%!;()@^~*+$<>");
                       
-			while(split != NULL)
+                        while(split != NULL)
                         {
                             string filename = path;
                             filename += split;
@@ -265,7 +261,7 @@ void AppendLinks(char *p, char *q, char *weblinks)
                                 fprintf(fp,"%s\n", stringcopy.c_str());
                                 fclose(fp);
                             }
-                            split = strtok(NULL, " .-/#&=?_%!;()@^~*");
+                            split = strtok(NULL, " .,-/#&=?_%!;()@^~*+$<>");
                         }
                         
                     }
@@ -306,7 +302,8 @@ int QSize(char *q)
 }
 
 /*!
-    @brief ........
+    @brief Function that puts the next url from p into myurl. Exits if
+    there are no more urls in p or p is empty
  */
 int GetNextURL(char *p, char *q, char *myurl)
 {
@@ -319,7 +316,7 @@ int GetNextURL(char *p, char *q, char *myurl)
     
     for(int i = 0; i < MAXURL; ++i)
     {
-        if(i > strlen(p)) //check end of queue?
+        if(i > strlen(p)) //check end of queue
         {
             cout << "i already passed p size, exiting..." << endl;
             return 0;
@@ -338,11 +335,15 @@ int GetNextURL(char *p, char *q, char *myurl)
     return 0;
 }
 
+/*!
+    @brief Function that points the position of p to the next url. Exits if 
+    there is nothing to point to or i gets bigger than the length of p
+ */
 char *ShiftP(char *p, char *q)
 {
     for(int i = 0; i < MAXURL; ++i)
     {
-        if(i > strlen(p)) //check end of queue?
+        if(i > strlen(p)) //check end of queue
         {
             cout << "i already passed p size, exiting..." << endl;
             return 0;
@@ -366,6 +367,9 @@ char *ShiftP(char *p, char *q)
     return 0;
 }
 
+/*!
+    @brief ........
+ */
 int main(int argc, const char * argv[]) {
     
     //Homework 2
