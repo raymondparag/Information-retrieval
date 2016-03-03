@@ -2,12 +2,13 @@
 # type make at the command prompt, it will compile the code.
 # For more depth, see http://www.gnu.org/software/make/manual/make.html
 
-CXX=g++
+#CXX=/vol/share/software/gcc/5.3.0/bin/g++
+CXX = g++
 CPPFLAGS=-lcurl
 
 main: main.cpp
-	$(CXX) -std=c++11 -o webspider main.cpp htmlstreamparser.cpp  $(CPPFLAGS)
+	$(CXX) -o webspider main.cpp htmlstreamparser.cpp  $(CPPFLAGS)
 
 webquery: webquery.cpp
-	$(CXX) -std=c++11 -o webquery webquery.cpp
+	$(CXX) -o webquery webquery.cpp
 
