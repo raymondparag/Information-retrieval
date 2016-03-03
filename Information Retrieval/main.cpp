@@ -19,7 +19,7 @@
 #define MAXQSIZE 9000000
 #define MAXURL 100000
 #define MAXPAGESIZE 20000
-#define MAXDOWNLOADS 50
+#define MAXDOWNLOADS 2000
 
 using namespace std;
 
@@ -78,7 +78,7 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
     html_parser_set_tag_to_lower(hsp, 1);
     html_parser_set_attr_to_lower(hsp, 1);
     
-    char tag[1]; char attr[4]; char val[1024]; //
+    char tag[1]; char attr[4]; char val[MAXURL]; //
     html_parser_set_tag_buffer(hsp, tag, sizeof(tag));
     html_parser_set_attr_buffer(hsp, attr, sizeof(attr));
     html_parser_set_val_buffer(hsp, val, sizeof(val)-1);
@@ -97,24 +97,22 @@ char *GetLinksFromWebPage(char *myhtmlpage, char *myurl)
                     {
                         char temp[strlen(val)];
                         strcpy(temp, val); //strcpy to assign char arrays!
-                        strcpy(val, myurl);
+                       			
+			char end_char = myurl[strlen(myurl)-1];			
+			if(end_char == '/')
+			{
+				myurl[strlen(myurl)-1] = '\0';
+			}			
+
+			strcpy(val, myurl);
+			
                         strcat(val, temp); //strcat is kinda "append"
                     }
-                    else if(val[0] != 'h') //extra check for anything else than just /
-                    {
-                        char temp[strlen(val)];
-                        strcpy(temp, val);
-                        
-                        char temp2[strlen(myurl)];
-                        strcpy(temp2, myurl);
-                        strcat(temp2, "/");
-                        
-                        strcpy(val, temp2);
-                        strcat(val, temp);
-                    }
-                    strcat(val, "\n");
-                    total.append(val);
-                    //cout << val;
+		    if(val[0] == '/' || val[0] == 'w' || val[0] == 'h')
+		    {
+			strcat(val, "\n");
+                    	total.append(val);
+		    }
                 }
     }
     html_parser_cleanup(hsp);
@@ -224,15 +222,7 @@ void AppendLinks(char *p, char *q, char *weblinks)
             for(int i = 0; i < strlen(weblinks); ++i)
             {
                 if(weblinks[i] == '\n')
-                {
-                
-                checkagain:
-                    if(total.back() == '/' || total.back() == '#') //wellicht ook # of zonder
-                    {
-                        total.pop_back();
-                        goto checkagain;
-                    }
-                    
+                {                    
                     if(strstr(q, total.c_str()) != NULL)
                     {
                         //cout << "ALREADY EXISTS! " << total << endl;
@@ -261,8 +251,9 @@ void AppendLinks(char *p, char *q, char *weblinks)
                         char temp_copy[total.size() + 1];
                         strcpy(temp_copy, total.c_str());
                         
-                        char *split = strtok(temp_copy, " .-/#&=?_%;");
-                        while(split != NULL)
+                        char *split = strtok(temp_copy, " .-/#&=?_%!;()@^~*");
+                      
+			while(split != NULL)
                         {
                             string filename = path;
                             filename += split;
@@ -274,7 +265,7 @@ void AppendLinks(char *p, char *q, char *weblinks)
                                 fprintf(fp,"%s\n", stringcopy.c_str());
                                 fclose(fp);
                             }
-                            split = strtok(NULL, " .-/#&=?_%;");
+                            split = strtok(NULL, " .-/#&=?_%!;()@^~*");
                         }
                         
                     }
