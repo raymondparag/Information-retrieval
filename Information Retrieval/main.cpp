@@ -205,6 +205,9 @@ void AppendLinks(char *p, char *q, char *weblinks)
         if(size < MAXQSIZE)
         {
             mkdir("webindex", 0700);
+            
+            /* Uncomment lines for OSX on OSX. Currently Linux is used. */
+            
             //string path = __FILE__; //OSX
             //size_t found = path.find_last_of("/\\"); //OSX
             //path = path.substr(0, found); //OSX
@@ -215,24 +218,24 @@ void AppendLinks(char *p, char *q, char *weblinks)
             
             string total;
             
-            for(int i = 0; i < strlen(weblinks); ++i)
+            for(int i = 0; i < strlen(weblinks); ++i) //iterate through weblinks
             {
-                if(weblinks[i] == '\n')
+                if(weblinks[i] == '\n') //if \n is found
                 {                    
-                    if(strstr(q, total.c_str()) != NULL)
+                    if(strstr(q, total.c_str()) != NULL) //check for duplicate
                     {
                         //cout << "ALREADY EXISTS! " << total << endl;
                     }
                    
                     else //add to queue and parse to file
                     {
-                        strcat(q, total.c_str()); //orig
-                        strcat(q, "\n"); //orig
+                        strcat(q, total.c_str());
+                        strcat(q, "\n");
                         
                         string stringcopy = total;
                         stringcopy += "\n";
                         
-                        if(total.find_first_of("/") == 5 || total.find_first_of("/") == 6)
+                        if(total.find_first_of("/") == 5 || total.find_first_of("/") == 6) //remove http or https of url for split
                         {
                             if(total.find_first_of("/") == 5)
                             {
@@ -368,7 +371,9 @@ char *ShiftP(char *p, char *q)
 }
 
 /*!
-    @brief ........
+    @brief main function that uses the above functions to run the webspider.
+    Links that are dead or are not in the domain are simply skipped. Function ends
+    when MAXDOWNLOADS is satisfied.
  */
 int main(int argc, const char * argv[]) {
     
