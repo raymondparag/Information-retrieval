@@ -30,6 +30,7 @@ For a more detailed installation process go to this [site](http://dahu.co.uk/blo
 3. make webquery (this is for the search)
 
 To run:
+
 ./webspider (To create webindex folder with files given a url)
 
 ./mongoose (To start a localhost, which runs ./webquery when a query is given)
