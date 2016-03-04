@@ -21,35 +21,23 @@ using namespace std;
 
 vector<string> total;
 
+/*!
+    @brief Function that reads the urls from a file given the query
+ */
 void printURL(string line, string line2)
 {
-    //cout << line << endl;
-    line += ".txt"; //For both
-    //cout << line << endl;
-    string path_linux = "webindex/"; // For Linux
-    path_linux +=line; // For Linux
-    //path += line; //For OSX
+    line += ".txt"; //Both
+    string path_linux = "webindex/"; //Linux
+    path_linux +=line; //Linux
+    //path += line; //OSX
     
-    //cout << path_linux.c_str() <<endl;
-    ifstream myfile2(path_linux.c_str()); //For Linux
+    ifstream myfile2(path_linux.c_str()); //Linux
     
     if(myfile2.is_open())
     {
         while (getline(myfile2, line2))
         {
             cout << line2 << endl;
-            /*if(find(total.begin(), total.end(), line2) != total.end())
-            {
-                //cout << "LOBBO" << endl;
-            }
-            else
-            {
-                cout << line2 << endl;
-                if(line2 != "\0")
-                {
-                   total.push_back(line2);
-                }
-            }*/
         }
         myfile2.close();
         line.clear();
@@ -60,19 +48,26 @@ void printURL(string line, string line2)
     }
 }  
 
+/*!
+    @brief Main function which reads the query in queryterms.txt and splits
+    the queries if more queries are given. Then it gives the strings to the 
+    printURL function which reads the urls from the files in webindex
+ */
 int main(int argc, const char * argv[]) {
     
     string line;
     string line2;
     total.push_back("!");
     
-    //string path = __FILE__;
-    //size_t found = path.find_last_of("/\\");
-    //path = path.substr(0, found);
+    /* Uncomment lines for OSX on OSX. Currently Linux is used. */
     
-    //string path_copy = path; //For OSX
-    //path_copy += "/queryterms.txt"; //For OSX
-    ifstream myfile("queryterms.txt"); //Instead of path_copy. For Linux
+    //string path = __FILE__; //OSX
+    //size_t found = path.find_last_of("/\\"); //OSX
+    //path = path.substr(0, found); //OSX
+    
+    //string path_copy = path; //OSX
+    //path_copy += "/queryterms.txt"; //OSX
+    ifstream myfile("queryterms.txt"); //Instead of path_copy. Linux
     if(myfile.is_open())
     {
         while(getline(myfile, line))
@@ -85,7 +80,7 @@ int main(int argc, const char * argv[]) {
         cout << "No query file found!" << endl;
     }
     
-    //path += "/webindex/"; //For OSX
+    //path += "/webindex/"; //OSX
     
     char temp[line.size()+1];
     strcpy(temp, line.c_str());
